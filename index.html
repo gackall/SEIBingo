@@ -1,249 +1,314 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Structural Engineering Institute Mentoring BINGO</title>
-<style>
-  :root {
-    --bg: #f2e9dd;         /* beige-ish background */
-    --line: #000000;       /* black grid lines */
-    --text: #111111;       /* black-ish text */
-    --selected: #33c667;   /* green for completed */
-    --radius: 16px;        /* outer rounding */
-    --cell-radius: 12px;   /* cell rounding */
-    --line-width: 4px;     /* thicker lines */
-    --gap: var(--line-width);
-    --shadow: 0 10px 30px rgba(0,0,0,0.14);
-    --modal-bg: #fff3cd;   /* central popup background */
-  }
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Structural Engineering Institute Mentoring BINGO</title>
+  <style>
+    :root{
+      --bg: #f3e9dc;          /* beige page background */
+      --paper: #fff;          /* modal card color (distinct from bg) */
+      --ink: #111111;         /* black text/lines */
+      --line: #111111;
+      --green: #2ecc71;       /* complete state */
+      --green-ink: #ffffff;
+      --muted: #6b6b6b;
+      --radius: 14px;
+      --radius-sm: 10px;
+      --focus: 2px solid #111111;
+      --shadow: 0 8px 30px rgba(0,0,0,0.12);
+      --shadow-soft: 0 4px 16px rgba(0,0,0,0.10);
+    }
 
-  * { box-sizing: border-box; }
-  html, body {
-    height: 100%;
-    margin: 0;
-    background: var(--bg);
-    color: var(--text);
-    font-family: ui-sans-serif, -apple-system, "Segoe UI", Roboto, Helvetica, Arial;
-  }
+    * { box-sizing: border-box; }
 
-  h1 {
-    text-align: center;
-    margin-top: 20px;
-    font-size: 1.8rem;
-  }
+    html, body {
+      height: 100%;
+      margin: 0;
+      background: var(--bg);
+      color: var(--ink);
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
 
-  h2 {
-    text-align: center;
-    font-size: 1rem;
-    font-weight: normal;
-    max-width: 800px;
-    margin: 10px auto 20px;
-    line-height: 1.4;
-  }
+    .page {
+      max-width: 980px;
+      margin: 48px auto;
+      padding: 0 20px 60px;
+    }
 
-  .wrap {
-    min-height: 100%;
-    display: grid;
-    place-items: center;
-    padding: 24px;
-  }
+    h1 {
+      margin: 0 0 10px 0;
+      font-size: clamp(24px, 3.2vw, 36px);
+      font-weight: 700;
+      letter-spacing: 0.2px;
+    }
 
-  .grid-outer {
-    background: var(--line);
-    padding: var(--gap);
-    border-radius: var(--radius);
-    box-shadow: var(--shadow);
-    width: min(92vw, 760px);
-    aspect-ratio: 1 / 1;
-  }
+    .subheader {
+      margin: 0 0 28px 0;
+      font-size: clamp(14px, 2.2vw, 16px);
+      color: var(--muted);
+      line-height: 1.5;
+      max-width: 70ch;
+    }
 
-  .grid {
-    height: 100%;
-    width: 100%;
-    display: grid;
-    grid-template-columns: repeat(5, 1fr);
-    grid-template-rows: repeat(5, 1fr);
-    gap: var(--gap);
-    border-radius: calc(var(--radius) - var(--gap));
-    overflow: hidden;
-  }
+    .board {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 10px;
+      user-select: none;
+    }
 
-  .cell {
-    position: relative;
-    border-radius: var(--cell-radius);
-    background: var(--bg);
-    display: grid;
-    place-items: center;
-    padding: 10px;
-    text-align: center;
-    cursor: pointer;
-    transition: background 200ms ease;
-    outline: none;
-    user-select: none;
-    border: none;
-  }
+    .cell {
+      position: relative;
+      background: transparent;
+      border: 2px solid var(--line);
+      border-radius: var(--radius);
+      min-height: 0;
+      aspect-ratio: 1 / 1;
+      padding: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      font-size: clamp(12px, 1.6vw, 16px);
+      line-height: 1.3;
+      cursor: pointer;
+      transition: transform 120ms ease, box-shadow 120ms ease, background-color 160ms ease, color 160ms ease;
+    }
 
-  .label {
-    font-size: clamp(12px, 2.2vw, 18px);
-    line-height: 1.2;
-    letter-spacing: 0.2px;
-  }
+    .cell:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-soft);
+    }
 
-  .cell.completed {
-    background: var(--selected);
-  }
+    .cell:active {
+      transform: translateY(0);
+      box-shadow: none;
+    }
 
-  .cell.completed .label {
-    color: #000;
-    font-weight: 600;
-  }
+    .cell.complete {
+      background: var(--green);
+      color: var(--green-ink);
+      border-color: var(--line);
+    }
 
-  .cell::after {
-    content: "";
-    position: absolute;
-    inset: 0;
-    border-radius: var(--cell-radius);
-    box-shadow: inset 0 0 0 1px var(--line);
-    pointer-events: none;
-    opacity: 0.5;
-  }
+    .cell:focus-visible {
+      outline: var(--focus);
+      outline-offset: 2px;
+    }
 
-  /* Modal styles */
-  .modal-overlay {
-    position: fixed;
-    inset: 0;
-    background: rgba(0,0,0,0.4);
-    display: none;
-    align-items: center;
-    justify-content: center;
-    z-index: 100;
-  }
+    /* Modal overlay */
+    .overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.28);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      z-index: 1000;
+    }
+    .overlay.active { display: flex; }
 
-  .modal {
-    background: var(--modal-bg);
-    padding: 20px;
-    border-radius: 12px;
-    max-width: 400px;
-    width: 90%;
-    box-shadow: var(--shadow);
-    text-align: center;
-  }
+    .modal {
+      width: min(520px, 92vw);
+      background: var(--paper);
+      color: var(--ink);
+      border: 2px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      transform: translateY(8px) scale(0.98);
+      opacity: 0;
+      transition: transform 160ms ease, opacity 160ms ease;
+    }
+    .overlay.active .modal {
+      transform: translateY(0) scale(1);
+      opacity: 1;
+    }
 
-  .modal h3 {
-    margin-top: 0;
-  }
+    .modal-body {
+      padding: 20px 20px 6px;
+    }
+    .modal-title {
+      margin: 0 0 6px 0;
+      font-weight: 700;
+      font-size: 16px;
+      letter-spacing: 0.2px;
+    }
+    .modal-text {
+      margin: 0;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.5;
+    }
 
-  .modal p {
-    margin: 10px 0 20px;
-  }
+    .modal-actions {
+      display: flex;
+      gap: 10px;
+      padding: 16px 20px 20px;
+      flex-wrap: wrap;
+    }
 
-  .modal button {
-    margin: 5px;
-    padding: 8px 14px;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    font-size: 0.9rem;
-  }
+    .btn {
+      appearance: none;
+      border: 2px solid var(--line);
+      background: var(--paper);
+      color: var(--ink);
+      padding: 10px 14px;
+      border-radius: var(--radius-sm);
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: transform 120ms ease, box-shadow 120ms ease, background-color 160ms ease, color 160ms ease, border-color 160ms ease;
+    }
+    .btn:hover { transform: translateY(-1px); box-shadow: var(--shadow-soft); }
+    .btn:active { transform: translateY(0); box-shadow: none; }
+    .btn:focus-visible { outline: var(--focus); outline-offset: 2px; }
 
-  .close-btn {
-    background: #ccc;
-  }
+    .btn-primary {
+      background: var(--ink);
+      color: #fff;
+      border-color: var(--ink);
+    }
+    .btn-primary:hover { filter: brightness(1.06); }
+    .btn-ghost { background: var(--paper); }
 
-  .complete-btn {
-    background: var(--selected);
-  }
-
-  .incomplete-btn {
-    background: #ff6666;
-    color: white;
-  }
-</style>
+    /* Small note under board (optional space keeping; no extra labels) */
+    .sr-only {
+      position: absolute !important;
+      height: 1px; width: 1px;
+      overflow: hidden; clip: rect(1px, 1px, 1px, 1px);
+      white-space: nowrap; border: 0; padding: 0; margin: -1px;
+    }
+  </style>
 </head>
 <body>
-  <h1>Structural Engineering Institute Mentoring BINGO</h1>
-  <h2>In celebration of National Mentoring Day, please take a minute to reflect on what you can do to mentor others around you and promote mentoring within your firm. We hope you can get five in a row!</h2>
+  <main class="page" aria-label="Bingo board">
+    <h1>Structural Engineering Institute Mentoring BINGO</h1>
+    <p class="subheader">
+      In celebration of National Mentoring Day, please take a minute to reflect on what you can do to mentor others around you and promote mentoring within your firm. We hope you can get five in a row!
+    </p>
 
-  <div class="wrap">
-    <div class="grid-outer">
-      <div class="grid" id="grid"></div>
-    </div>
-  </div>
+    <section class="board" id="board" aria-live="polite"></section>
+  </main>
 
   <!-- Modal -->
-  <div class="modal-overlay" id="modalOverlay">
-    <div class="modal" id="modal">
-      <h3 id="modalTitle"></h3>
-      <p id="modalDetail"></p>
-      <div id="modalButtons"></div>
+  <div class="overlay" id="overlay" aria-modal="true" role="dialog" aria-hidden="true">
+    <div class="modal" role="document">
+      <div class="modal-body">
+        <h2 class="modal-title" id="modalTitle">Bingo item</h2>
+        <p class="modal-text">Choose an action for this square.</p>
+      </div>
+      <div class="modal-actions">
+        <button class="btn btn-ghost" id="closeBtn" type="button">Close</button>
+        <button class="btn btn-primary" id="toggleBtn" type="button">Mark as Complete</button>
+      </div>
     </div>
   </div>
 
-<script>
-  const items = [
-    { label: "B1", detail: "More info about B1." },
-    { label: "I1", detail: "More info about I1." },
-    { label: "N1", detail: "More info about N1." },
-    { label: "G1", detail: "More info about G1." },
-    { label: "O1", detail: "More info about O1." },
+  <script>
+    // 25 mentoring-focused prompts (customize freely)
+    const ITEMS = [
+      "Share a lesson learned with a junior engineer",
+      "Give feedback on a colleague’s calculation",
+      "Ask someone about their career goals",
+      "Recommend a favorite technical resource",
+      "Celebrate a teammate’s win",
+      "Invite a new hire to coffee",
+      "Pair up for a site visit",
+      "Offer to review a resume",
+      "Explain a code provision you know well",
+      "Share a time you made a mistake and grew",
+      "Encourage a lunch-and-learn presentation",
+      "Introduce two people who should meet",
+      "Offer shadowing on a client call",
+      "Share a template or checklist you rely on",
+      "Teach a shortcut that saves time",
+      "Ask for feedback on your mentoring style",
+      "Nominate someone for recognition",
+      "Share a book or article that inspired you",
+      "Offer a 15-minute micro-mentoring session",
+      "Discuss ethics on a current project",
+      "Walk through a calc by hand together",
+      "Review a drawing set with a junior",
+      "Encourage taking ownership of a task",
+      "Share how you manage deadlines",
+      "Set a mentoring goal for next month"
+    ];
 
-    { label: "B2", detail: "More info about B2." },
-    { label: "I2", detail: "More info about I2." },
-    { label: "N2", detail: "More info about N2." },
-    { label: "G2", detail: "More info about G2." },
-    { label: "O2", detail: "More info about O2." },
+    const boardEl = document.getElementById('board');
+    const overlayEl = document.getElementById('overlay');
+    const toggleBtn = document.getElementById('toggleBtn');
+    const closeBtn  = document.getElementById('closeBtn');
+    const modalTitle = document.getElementById('modalTitle');
 
-    { label: "B3", detail: "More info about B3." },
-    { label: "I3", detail: "More info about I3." },
-    { label: "FREE", detail: "Center free space.", free: true },
-    { label: "G3", detail: "More info about G3." },
-    { label: "O3", detail: "More info about O3." },
+    let currentCell = null;
 
-    { label: "B4", detail: "More info about B4." },
-    { label: "I4", detail: "More info about I4." },
-    { label: "N4", detail: "More info about N4." },
-    { label: "G4", detail: "More info about G4." },
-    { label: "O4", detail: "More info about O4." },
+    // Build 5x5 board
+    function buildBoard() {
+      boardEl.innerHTML = '';
+      ITEMS.forEach((text, idx) => {
+        const cell = document.createElement('button');
+        cell.className = 'cell';
+        cell.type = 'button';
+        cell.setAttribute('data-index', idx);
+        cell.setAttribute('aria-label', text);
+        cell.textContent = text;
+        boardEl.appendChild(cell);
+      });
+    }
 
-    { label: "B5", detail: "More info about B5." },
-    { label: "I5", detail: "More info about I5." },
-    { label: "N5", detail: "More info about N5." },
-    { label: "G5", detail: "More info about G5." },
-    { label: "O5", detail: "More info about O5." },
-  ];
+    function openModalForCell(cell) {
+      currentCell = cell;
+      modalTitle.textContent = cell.textContent;
+      const isComplete = cell.classList.contains('complete');
+      toggleBtn.textContent = isComplete ? 'Mark as Incomplete' : 'Mark as Complete';
+      overlayEl.classList.add('active');
+      overlayEl.setAttribute('aria-hidden', 'false');
+      // Move focus accessibly to modal primary action
+      setTimeout(() => toggleBtn.focus(), 0);
+    }
 
-  const grid = document.getElementById('grid');
-  const modalOverlay = document.getElementById('modalOverlay');
-  const modalTitle = document.getElementById('modalTitle');
-  const modalDetail = document.getElementById('modalDetail');
-  const modalButtons = document.getElementById('modalButtons');
+    function closeModal() {
+      overlayEl.classList.remove('active');
+      overlayEl.setAttribute('aria-hidden', 'true');
+      // Return focus to the originating cell for continuity
+      if (currentCell) currentCell.focus();
+      currentCell = null;
+    }
 
-  // Build grid
-  items.forEach(item => {
-    const btn = document.createElement('button');
-    btn.type = 'button';
-    btn.className = 'cell';
-    btn.innerHTML = `<div class="label">${item.label}</div>`;
-    btn.dataset.label = item.label;
-    btn.dataset.detail = item.detail;
-    btn.dataset.completed = "false";
-    grid.appendChild(btn);
-  });
+    // Toggle completion and close
+    toggleBtn.addEventListener('click', () => {
+      if (!currentCell) return;
+      currentCell.classList.toggle('complete');
+      closeModal();
+    });
 
-  // Open modal on cell click
-  grid.addEventListener('click', e => {
-    const cell = e.target.closest('.cell');
-    if (!cell) return;
-    openModal(cell);
-  });
+    closeBtn.addEventListener('click', closeModal);
 
-  function openModal(cell) {
-    modalTitle.textContent = cell.dataset.label;
-    modalDetail.textContent = cell.dataset.detail;
-    modalButtons.innerHTML = '';
+    // Clicking a cell opens modal
+    boardEl.addEventListener('click', (e) => {
+      const cell = e.target.closest('.cell');
+      if (!cell) return;
+      openModalForCell(cell);
+    });
 
-    const closeBtn = document.createElement('button');
-    closeBtn.textContent = 'Close';
-    closeBtn.className = 'close-btn';
-    closeBtn.onclick = ()
+    // Click outside modal closes (overlay background)
+    overlayEl.addEventListener('click', (e) => {
+      const withinModal = e.target.closest('.modal');
+      if (!withinModal) closeModal();
+    });
+
+    // Escape key closes
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && overlayEl.classList.contains('active')) {
+        closeModal();
+      }
+    });
+
+    buildBoard();
+  </script>
+</body>
+</html>
