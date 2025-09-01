@@ -3,20 +3,19 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Bingo</title>
+<title>Structural Engineering Institute Mentoring BINGO</title>
 <style>
   :root {
     --bg: #f2e9dd;         /* beige-ish background */
     --line: #000000;       /* black grid lines */
     --text: #111111;       /* black-ish text */
-    --selected: #33c667;   /* modern green */
-    --popup-bg: #ffffff;   /* popup background */
-    --popup-text: #111111; /* popup text */
+    --selected: #33c667;   /* green for completed */
     --radius: 16px;        /* outer rounding */
     --cell-radius: 12px;   /* cell rounding */
-    --line-width: 2px;
+    --line-width: 4px;     /* thicker lines */
     --gap: var(--line-width);
     --shadow: 0 10px 30px rgba(0,0,0,0.14);
+    --modal-bg: #fff3cd;   /* central popup background */
   }
 
   * { box-sizing: border-box; }
@@ -25,7 +24,22 @@
     margin: 0;
     background: var(--bg);
     color: var(--text);
-    font-family: ui-sans-serif, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+    font-family: ui-sans-serif, -apple-system, "Segoe UI", Roboto, Helvetica, Arial;
+  }
+
+  h1 {
+    text-align: center;
+    margin-top: 20px;
+    font-size: 1.8rem;
+  }
+
+  h2 {
+    text-align: center;
+    font-size: 1rem;
+    font-weight: normal;
+    max-width: 800px;
+    margin: 10px auto 20px;
+    line-height: 1.4;
   }
 
   .wrap {
@@ -64,13 +78,11 @@
     padding: 10px;
     text-align: center;
     cursor: pointer;
-    transition: background 200ms ease, transform 120ms ease;
+    transition: background 200ms ease;
     outline: none;
     user-select: none;
-    border: none; /* using the outer black gap as grid lines */
+    border: none;
   }
-
-  .cell:active { transform: translateY(1px); }
 
   .label {
     font-size: clamp(12px, 2.2vw, 18px);
@@ -78,16 +90,15 @@
     letter-spacing: 0.2px;
   }
 
-  .cell.selected {
+  .cell.completed {
     background: var(--selected);
   }
 
-  .cell.selected .label {
+  .cell.completed .label {
     color: #000;
     font-weight: 600;
   }
 
-  /* subtle inner outline so lines feel consistent even when selected */
   .cell::after {
     content: "";
     position: absolute;
@@ -98,170 +109,141 @@
     opacity: 0.5;
   }
 
-  /* Popup */
-  .popup {
-    position: absolute;
-    z-index: 10;
-    left: 50%;
-    bottom: 100%;
-    transform: translate(-50%, -12px) scale(0.98);
-    transform-origin: bottom center;
-    max-width: min(280px, 80vw);
-    background: var(--popup-bg);
-    color: var(--popup-text);
-    border: 1px solid var(--line);
+  /* Modal styles */
+  .modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.4);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 100;
+  }
+
+  .modal {
+    background: var(--modal-bg);
+    padding: 20px;
     border-radius: 12px;
-    padding: 10px 12px;
+    max-width: 400px;
+    width: 90%;
     box-shadow: var(--shadow);
-    font-size: 14px;
-    line-height: 1.3;
-    display: grid;
-    gap: 6px;
-    opacity: 0;
-    visibility: hidden;
-    transition: opacity 160ms ease, transform 160ms ease, visibility 0s linear 160ms;
+    text-align: center;
   }
 
-  .popup strong {
-    font-weight: 700;
-    font-size: 13px;
-    letter-spacing: 0.2px;
+  .modal h3 {
+    margin-top: 0;
   }
 
-  /* arrow */
-  .popup::after {
-    content: "";
-    position: absolute;
-    top: 100%;
-    left: 50%;
-    transform: translateX(-50%);
-    border-width: 7px;
-    border-style: solid;
-    border-color: var(--popup-bg) transparent transparent transparent;
-    filter: drop-shadow(0 -1px 0 var(--line));
+  .modal p {
+    margin: 10px 0 20px;
   }
 
-  /* show on hover or focus */
-  .cell:hover .popup,
-  .cell:focus-within .popup {
-    opacity: 1;
-    visibility: visible;
-    transform: translate(-50%, -16px) scale(1);
-    transition-delay: 0s;
+  .modal button {
+    margin: 5px;
+    padding: 8px 14px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 0.9rem;
   }
 
-  /* keyboard focus */
-  .cell:focus-visible {
-    outline: 2px solid #000;
-    outline-offset: -2px;
+  .close-btn {
+    background: #ccc;
   }
 
-  /* optional FREE style */
-  .cell.free .label {
-    font-weight: 700;
-    letter-spacing: 0.6px;
+  .complete-btn {
+    background: var(--selected);
   }
 
-  /* mobile tweaks */
-  @media (max-width: 480px) {
-    .label { font-size: clamp(12px, 3.4vw, 16px); }
-    .popup { font-size: 13px; }
+  .incomplete-btn {
+    background: #ff6666;
+    color: white;
   }
 </style>
 </head>
 <body>
+  <h1>Structural Engineering Institute Mentoring BINGO</h1>
+  <h2>In celebration of National Mentoring Day, please take a minute to reflect on what you can do to mentor others around you and promote mentoring within your firm. We hope you can get five in a row!</h2>
+
   <div class="wrap">
-    <div class="grid-outer" role="application" aria-label="Interactive bingo grid">
-      <div class="grid" id="grid" role="grid" aria-rowcount="5" aria-colcount="5"></div>
+    <div class="grid-outer">
+      <div class="grid" id="grid"></div>
     </div>
   </div>
 
-  <script>
-  // Edit the labels and details here. 25 items in row-major order (5x5).
+  <!-- Modal -->
+  <div class="modal-overlay" id="modalOverlay">
+    <div class="modal" id="modal">
+      <h3 id="modalTitle"></h3>
+      <p id="modalDetail"></p>
+      <div id="modalButtons"></div>
+    </div>
+  </div>
+
+<script>
   const items = [
-    { label: "B1", detail: "More info about B1. Replace this text." },
-    { label: "I1", detail: "More info about I1. Replace this text." },
-    { label: "N1", detail: "More info about N1. Replace this text." },
-    { label: "G1", detail: "More info about G1. Replace this text." },
-    { label: "O1", detail: "More info about O1. Replace this text." },
+    { label: "B1", detail: "More info about B1." },
+    { label: "I1", detail: "More info about I1." },
+    { label: "N1", detail: "More info about N1." },
+    { label: "G1", detail: "More info about G1." },
+    { label: "O1", detail: "More info about O1." },
 
-    { label: "B2", detail: "More info about B2. Replace this text." },
-    { label: "I2", detail: "More info about I2. Replace this text." },
-    { label: "N2", detail: "More info about N2. Replace this text." },
-    { label: "G2", detail: "More info about G2. Replace this text." },
-    { label: "O2", detail: "More info about O2. Replace this text." },
+    { label: "B2", detail: "More info about B2." },
+    { label: "I2", detail: "More info about I2." },
+    { label: "N2", detail: "More info about N2." },
+    { label: "G2", detail: "More info about G2." },
+    { label: "O2", detail: "More info about O2." },
 
-    { label: "B3", detail: "More info about B3. Replace this text." },
-    { label: "I3", detail: "More info about I3. Replace this text." },
-    { label: "FREE", detail: "Center free space. You can rename or keep as FREE.", free: true },
-    { label: "G3", detail: "More info about G3. Replace this text." },
-    { label: "O3", detail: "More info about O3. Replace this text." },
+    { label: "B3", detail: "More info about B3." },
+    { label: "I3", detail: "More info about I3." },
+    { label: "FREE", detail: "Center free space.", free: true },
+    { label: "G3", detail: "More info about G3." },
+    { label: "O3", detail: "More info about O3." },
 
-    { label: "B4", detail: "More info about B4. Replace this text." },
-    { label: "I4", detail: "More info about I4. Replace this text." },
-    { label: "N4", detail: "More info about N4. Replace this text." },
-    { label: "G4", detail: "More info about G4. Replace this text." },
-    { label: "O4", detail: "More info about O4. Replace this text." },
+    { label: "B4", detail: "More info about B4." },
+    { label: "I4", detail: "More info about I4." },
+    { label: "N4", detail: "More info about N4." },
+    { label: "G4", detail: "More info about G4." },
+    { label: "O4", detail: "More info about O4." },
 
-    { label: "B5", detail: "More info about B5. Replace this text." },
-    { label: "I5", detail: "More info about I5. Replace this text." },
-    { label: "N5", detail: "More info about N5. Replace this text." },
-    { label: "G5", detail: "More info about G5. Replace this text." },
-    { label: "O5", detail: "More info about O5. Replace this text." },
+    { label: "B5", detail: "More info about B5." },
+    { label: "I5", detail: "More info about I5." },
+    { label: "N5", detail: "More info about N5." },
+    { label: "G5", detail: "More info about G5." },
+    { label: "O5", detail: "More info about O5." },
   ];
 
   const grid = document.getElementById('grid');
+  const modalOverlay = document.getElementById('modalOverlay');
+  const modalTitle = document.getElementById('modalTitle');
+  const modalDetail = document.getElementById('modalDetail');
+  const modalButtons = document.getElementById('modalButtons');
 
-  // Build the 5x5 grid
-  items.forEach((item, index) => {
-    const row = Math.floor(index / 5) + 1;
-    const col = (index % 5) + 1;
-
+  // Build grid
+  items.forEach(item => {
     const btn = document.createElement('button');
     btn.type = 'button';
-    btn.className = 'cell' + (item.free ? ' free' : '');
-    btn.setAttribute('role', 'gridcell');
-    btn.setAttribute('aria-rowindex', row);
-    btn.setAttribute('aria-colindex', col);
-    btn.setAttribute('aria-pressed', 'false');
-    btn.title = item.detail;
-
-    btn.innerHTML = `
-      <div class="label">${item.label}</div>
-      <div class="popup" role="tooltip" aria-hidden="true">
-        <strong>${item.label}</strong>
-        <span>${item.detail}</span>
-      </div>
-    `;
-
+    btn.className = 'cell';
+    btn.innerHTML = `<div class="label">${item.label}</div>`;
+    btn.dataset.label = item.label;
+    btn.dataset.detail = item.detail;
+    btn.dataset.completed = "false";
     grid.appendChild(btn);
   });
 
-  const cells = Array.from(grid.querySelectorAll('.cell'));
-
-  // Toggle behavior: click to turn green, click again to turn back
-  grid.addEventListener('click', (e) => {
+  // Open modal on cell click
+  grid.addEventListener('click', e => {
     const cell = e.target.closest('.cell');
     if (!cell) return;
-    const isSelected = cell.classList.toggle('selected');
-    cell.setAttribute('aria-pressed', isSelected ? 'true' : 'false');
+    openModal(cell);
   });
 
-  // Keyboard: Enter/Space toggles; Escape clears all
-  grid.addEventListener('keydown', (e) => {
-    const cell = e.target.closest('.cell');
-    if (!cell) return;
+  function openModal(cell) {
+    modalTitle.textContent = cell.dataset.label;
+    modalDetail.textContent = cell.dataset.detail;
+    modalButtons.innerHTML = '';
 
-    if (e.key === 'Enter' || e.key === ' ') {
-      e.preventDefault();
-      cell.click();
-    } else if (e.key === 'Escape') {
-      cells.forEach(c => {
-        c.classList.remove('selected');
-        c.setAttribute('aria-pressed', 'false');
-      });
-    }
-  });
-</script>
-</body>
-</html>
+    const closeBtn = document.createElement('button');
+    closeBtn.textContent = 'Close';
+    closeBtn.className = 'close-btn';
+    closeBtn.onclick = ()
