@@ -63,7 +63,7 @@
     .cell {
       position: relative;
       background: transparent;
-      border: 2px solid var(--line);
+      border: 4px solid var(--line);  /* box line thickness */
       border-radius: var(--radius);
       min-height: 0;
       aspect-ratio: 1 / 1;
@@ -199,7 +199,7 @@
     <div class="modal" role="document">
       <div class="modal-body">
         <h2 class="modal-title" id="modalTitle">Bingo item</h2>
-        <p class="modal-text">Choose an action for this square.</p>
+        <p class="modal-text" id="modalDetail">Choose an action for this square.</p>
       </div>
       <div class="modal-actions">
         <button class="btn btn-ghost" id="closeBtn" type="button">Close</button>
@@ -237,6 +237,34 @@
       "Share how you manage deadlines",
       "Set a mentoring goal for next month"
     ];
+    
+    const DETAILS = [
+      "bla bla text 1.",
+      "bla bla text 2.",
+      "bla bla text 3.",
+      "bla bla text 4.",
+      "bla bla text 5.",
+      "bla bla text 6.",
+      "bla bla text 7.",
+      "bla bla text 8.",
+      "bla bla text 9.",
+      "bla bla text 10.",
+      "bla bla text 11.",
+      "bla bla text 12.",
+      "bla bla text 13.",
+      "bla bla text 14.",
+      "bla bla text 15.",
+      "bla bla text 16.",
+      "bla bla text 17.",
+      "bla bla text 18.",
+      "bla bla text 19.",
+      "bla bla text 20.",
+      "bla bla text 21.",
+      "bla bla text 22.",
+      "bla bla text 23.",
+      "bla bla text 24.",
+      "bla bla text 25."
+    ];
 
     const boardEl = document.getElementById('board');
     const overlayEl = document.getElementById('overlay');
@@ -263,6 +291,8 @@
     function openModalForCell(cell) {
       currentCell = cell;
       modalTitle.textContent = cell.textContent;
+      const idx = parseInt(cell.getAttribute('data-index'), 10);
+      document.getElementById('modalDetail').textContent = DETAILS[idx];
       const isComplete = cell.classList.contains('complete');
       toggleBtn.textContent = isComplete ? 'Mark as Incomplete' : 'Mark as Complete';
       overlayEl.classList.add('active');
