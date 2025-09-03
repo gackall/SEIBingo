@@ -43,20 +43,22 @@
     /* Logo Header */
     .header {
       display: flex;
+      flex-direction: column;
       align-items: center;
+      text-align: center;
       margin-bottom: 30px;
       gap: 20px;
     }
-
+    
     .logo {
       height: 60px;
       width: auto;
       border-radius: 8px;
       box-shadow: 0 2px 8px rgba(0,0,0,0.1);
     }
-
+    
     .title-container {
-      flex: 1;
+      /* Remove flex: 1 since we're now stacking vertically */
     }
 
     h1 {
@@ -66,6 +68,7 @@
       letter-spacing: 0.2px;
       text-align: center;
     }
+
 
     .subheader {
       margin: 0 auto 40px;
@@ -87,7 +90,7 @@
 
     .cell {
       position: relative;
-      background: var(--paper);
+      background: var(--bg);
       border: 3px solid var(--line);
       border-radius: var(--radius);
       min-height: 0;
@@ -212,8 +215,6 @@
       }
 
       .header {
-        flex-direction: column;
-        text-align: center;
         gap: 15px;
         margin-bottom: 25px;
       }
