@@ -38,6 +38,7 @@
       padding: 20px 15px 60px;
       min-height: 100vh;
       position: relative;
+      text-align: center; /* This helps center child elements */
     }
 
     /* Logo Header */
@@ -67,9 +68,9 @@
       font-weight: 700;
       letter-spacing: 0.2px;
       text-align: center;
+      width: 100%; /* Ensure full width */
     }
-
-
+    
     .subheader {
       margin: 0 auto 40px;
       font-size: clamp(14px, 2.5vw, 16px);
@@ -77,6 +78,8 @@
       line-height: 1.5;
       max-width: 70ch;
       text-align: center;
+      width: 100%; /* Ensure full width */
+      box-sizing: border-box; /* Include padding in width */
     }
 
     .board {
@@ -307,7 +310,7 @@
     </header>
 
     <p class="subheader">
-      In celebration of National Mentoring Day, please take a minute to reflect on what you can do to mentor others around you and promote mentoring within your firm. We hope you can get five in a row!
+      In celebration of National Mentoring Day, please take a minute to reflect on what you can do to mentor others around you and promote mentoring within your firm. Click on each box to learn more information about it and check it off. We hope you can get five in a row!
     </p>
 
     <section class="board" id="board" aria-live="polite"></section>
