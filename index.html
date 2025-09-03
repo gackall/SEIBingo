@@ -34,50 +34,75 @@
 
     .page {
       max-width: 980px;
-      margin: 48px auto;
-      padding: 0 20px 60px;
+      margin: 0 auto;
+      padding: 20px 15px 60px;
+      min-height: 100vh;
+      position: relative;
+    }
+
+    /* Logo Header */
+    .header {
+      display: flex;
+      align-items: center;
+      margin-bottom: 30px;
+      gap: 20px;
+    }
+
+    .logo {
+      height: 60px;
+      width: auto;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+
+    .title-container {
+      flex: 1;
     }
 
     h1 {
       margin: 0 0 10px 0;
-      font-size: clamp(24px, 3.2vw, 36px);
+      font-size: clamp(20px, 4vw, 36px);
       font-weight: 700;
       letter-spacing: 0.2px;
+      text-align: center;
     }
 
     .subheader {
-    margin: 0 auto 28px;   /* auto left/right centers the block */
-    font-size: clamp(14px, 2.2vw, 16px);
-    color: var(--muted);
-    line-height: 1.5;
-    max-width: 70ch;
-    text-align: center;    /* keeps the text centered inside */
+      margin: 0 auto 40px;
+      font-size: clamp(14px, 2.5vw, 16px);
+      color: var(--muted);
+      line-height: 1.5;
+      max-width: 70ch;
+      text-align: center;
     }
-
 
     .board {
       display: grid;
       grid-template-columns: repeat(5, 1fr);
-      gap: 10px;
+      gap: clamp(6px, 1.5vw, 12px);
       user-select: none;
+      margin: 0 auto;
+      max-width: 100%;
     }
 
     .cell {
       position: relative;
-      background: transparent;
-      border: 4px solid var(--line);  /* box line thickness */
+      background: var(--paper);
+      border: 3px solid var(--line);
       border-radius: var(--radius);
       min-height: 0;
       aspect-ratio: 1 / 1;
-      padding: 12px;
+      padding: clamp(8px, 2vw, 12px);
       display: flex;
       align-items: center;
       justify-content: center;
       text-align: center;
-      font-size: clamp(12px, 1.6vw, 16px);
-      line-height: 1.3;
+      font-size: clamp(10px, 2.2vw, 14px);
+      line-height: 1.2;
       cursor: pointer;
       transition: transform 120ms ease, box-shadow 120ms ease, background-color 160ms ease, color 160ms ease;
+      font-weight: 500;
+      min-height: 80px;
     }
 
     .cell:hover {
@@ -115,7 +140,9 @@
     .overlay.active { display: flex; }
 
     .modal {
-      width: min(520px, 92vw);
+      width: min(520px, 95vw);
+      max-height: 90vh;
+      overflow-y: auto;
       background: var(--paper);
       color: var(--ink);
       border: 2px solid var(--line);
@@ -136,13 +163,13 @@
     .modal-title {
       margin: 0 0 6px 0;
       font-weight: 700;
-      font-size: 16px;
+      font-size: clamp(16px, 3vw, 18px);
       letter-spacing: 0.2px;
     }
     .modal-text {
       margin: 0;
       color: var(--muted);
-      font-size: 14px;
+      font-size: clamp(13px, 2.5vw, 14px);
       line-height: 1.5;
     }
 
@@ -158,12 +185,13 @@
       border: 2px solid var(--line);
       background: var(--paper);
       color: var(--ink);
-      padding: 10px 14px;
+      padding: 12px 16px;
       border-radius: var(--radius-sm);
-      font-size: 14px;
+      font-size: clamp(13px, 2.5vw, 14px);
       font-weight: 700;
       cursor: pointer;
       transition: transform 120ms ease, box-shadow 120ms ease, background-color 160ms ease, color 160ms ease, border-color 160ms ease;
+      min-height: 44px; /* Touch-friendly minimum */
     }
     .btn:hover { transform: translateY(-1px); box-shadow: var(--shadow-soft); }
     .btn:active { transform: translateY(0); box-shadow: none; }
@@ -177,7 +205,84 @@
     .btn-primary:hover { filter: brightness(1.06); }
     .btn-ghost { background: var(--paper); }
 
-    /* Small note under board (optional space keeping; no extra labels) */
+    /* Mobile optimizations */
+    @media (max-width: 768px) {
+      .page {
+        padding: 15px 10px 40px;
+      }
+
+      .header {
+        flex-direction: column;
+        text-align: center;
+        gap: 15px;
+        margin-bottom: 25px;
+      }
+
+      .logo {
+        height: 50px;
+      }
+
+      .board {
+        gap: 8px;
+      }
+
+      .cell {
+        min-height: 70px;
+        border-width: 2px;
+      }
+
+      .modal {
+        width: min(480px, 92vw);
+      }
+
+      .modal-actions {
+        flex-direction: column;
+      }
+
+      .btn {
+        width: 100%;
+        justify-content: center;
+        display: flex;
+        align-items: center;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .cell {
+        min-height: 60px;
+        font-size: clamp(9px, 2.8vw, 12px);
+      }
+
+      .board {
+        gap: 6px;
+      }
+    }
+
+    /* Large screen optimizations */
+    @media (min-width: 1200px) {
+      .page {
+        padding: 40px 20px 80px;
+      }
+
+      .header {
+        margin-bottom: 50px;
+      }
+
+      .logo {
+        height: 80px;
+      }
+
+      .board {
+        max-width: 600px;
+        gap: 15px;
+      }
+
+      .cell {
+        min-height: 120px;
+      }
+    }
+
+    /* Screen reader only content */
     .sr-only {
       position: absolute !important;
       height: 1px; width: 1px;
@@ -188,7 +293,18 @@
 </head>
 <body>
   <main class="page" aria-label="Bingo board">
-    <h1 style="text-align: center;">Structural Engineering Institute Mentoring BINGO</h1>
+    <header class="header">
+      <img 
+        src="https://seiworkshop.sites.northeastern.edu/files/2024/04/5b748899-bf3b-4eb8-86b6-0ec996e4ec97-002-86f67258d587a667-1024x682.png" 
+        alt="Structural Engineering Institute Logo" 
+        class="logo"
+        onerror="this.style.display='none'"
+      >
+      <div class="title-container">
+        <h1>Structural Engineering Institute Mentoring BINGO</h1>
+      </div>
+    </header>
+
     <p class="subheader">
       In celebration of National Mentoring Day, please take a minute to reflect on what you can do to mentor others around you and promote mentoring within your firm. We hope you can get five in a row!
     </p>
@@ -214,10 +330,10 @@
     // 25 mentoring-focused prompts (customize freely)
     const ITEMS = [
       "Share a lesson learned with a junior engineer",
-      "Give feedback on a colleague’s calculation",
+      "Give feedback on a colleague's calculation",
       "Ask someone about their career goals",
       "Recommend a favorite technical resource",
-      "Celebrate a teammate’s win",
+      "Celebrate a teammate's win",
       "Invite a new hire to coffee",
       "Pair up for a site visit",
       "Offer to review a resume",
@@ -241,7 +357,6 @@
     ];
     
     const DETAILS = [
-      "This text adds extra detail about the task or topic and provides links to related resources or follow-up information. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras placerat ante vitae dui vestibulum luctus. Nulla semper nunc sit amet sagittis ultricies. Donec dui velit, condimentum nec bibendum sagittis, egestas et felis. Nunc hendrerit aliquet hendrerit. Vestibulum dolor libero, fringilla quis interdum et, porta elementum nisi. Vestibulum dignissim urna a iaculis rhoncus. Fusce enim mi, faucibus nec pharetra a, iaculis ac lorem. Sed sapien leo, ullamcorper sit amet imperdiet quis, vehicula aliquam orci. Aenean feugiat orci ut nisl ullamcorper auctor. Suspendisse in mi iaculis, efficitur lacus eu, rhoncus tellus. Etiam vestibulum turpis libero, a tempus ligula cursus in. Nulla molestie lectus et ipsum ornare, a lobortis quam tristique. Mauris porta diam erat, ut efficitur purus ullamcorper vitae. Nulla mi mi, rhoncus sit amet sem in, mollis imperdiet enim. Etiam lobortis suscipit turpis at pellentesque.",
       "This text adds extra detail about the task or topic and provides links to related resources or follow-up information. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras placerat ante vitae dui vestibulum luctus. Nulla semper nunc sit amet sagittis ultricies. Donec dui velit, condimentum nec bibendum sagittis, egestas et felis. Nunc hendrerit aliquet hendrerit. Vestibulum dolor libero, fringilla quis interdum et, porta elementum nisi. Vestibulum dignissim urna a iaculis rhoncus. Fusce enim mi, faucibus nec pharetra a, iaculis ac lorem. Sed sapien leo, ullamcorper sit amet imperdiet quis, vehicula aliquam orci. Aenean feugiat orci ut nisl ullamcorper auctor. Suspendisse in mi iaculis, efficitur lacus eu, rhoncus tellus. Etiam vestibulum turpis libero, a tempus ligula cursus in. Nulla molestie lectus et ipsum ornare, a lobortis quam tristique. Mauris porta diam erat, ut efficitur purus ullamcorper vitae. Nulla mi mi, rhoncus sit amet sem in, mollis imperdiet enim. Etiam lobortis suscipit turpis at pellentesque.",
       "This text adds extra detail about the task or topic and provides links to related resources or follow-up information. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras placerat ante vitae dui vestibulum luctus. Nulla semper nunc sit amet sagittis ultricies. Donec dui velit, condimentum nec bibendum sagittis, egestas et felis. Nunc hendrerit aliquet hendrerit. Vestibulum dolor libero, fringilla quis interdum et, porta elementum nisi. Vestibulum dignissim urna a iaculis rhoncus. Fusce enim mi, faucibus nec pharetra a, iaculis ac lorem. Sed sapien leo, ullamcorper sit amet imperdiet quis, vehicula aliquam orci. Aenean feugiat orci ut nisl ullamcorper auctor. Suspendisse in mi iaculis, efficitur lacus eu, rhoncus tellus. Etiam vestibulum turpis libero, a tempus ligula cursus in. Nulla molestie lectus et ipsum ornare, a lobortis quam tristique. Mauris porta diam erat, ut efficitur purus ullamcorper vitae. Nulla mi mi, rhoncus sit amet sem in, mollis imperdiet enim. Etiam lobortis suscipit turpis at pellentesque.",
       "This text adds extra detail about the task or topic and provides links to related resources or follow-up information. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras placerat ante vitae dui vestibulum luctus. Nulla semper nunc sit amet sagittis ultricies. Donec dui velit, condimentum nec bibendum sagittis, egestas et felis. Nunc hendrerit aliquet hendrerit. Vestibulum dolor libero, fringilla quis interdum et, porta elementum nisi. Vestibulum dignissim urna a iaculis rhoncus. Fusce enim mi, faucibus nec pharetra a, iaculis ac lorem. Sed sapien leo, ullamcorper sit amet imperdiet quis, vehicula aliquam orci. Aenean feugiat orci ut nisl ullamcorper auctor. Suspendisse in mi iaculis, efficitur lacus eu, rhoncus tellus. Etiam vestibulum turpis libero, a tempus ligula cursus in. Nulla molestie lectus et ipsum ornare, a lobortis quam tristique. Mauris porta diam erat, ut efficitur purus ullamcorper vitae. Nulla mi mi, rhoncus sit amet sem in, mollis imperdiet enim. Etiam lobortis suscipit turpis at pellentesque.",
