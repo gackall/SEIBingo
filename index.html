@@ -4,13 +4,14 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Structural Engineering Institute Mentoring BINGO</title>
+  <link href="https://fonts.googleapis.com/css?family=EB+Garamond" rel="stylesheet">
   <style>
     :root{
       --bg: #f3e9dc;          /* beige page background */
       --paper: #fff;          /* modal card color (distinct from bg) */
       --ink: #111111;         /* black text/lines */
       --line: #111111;
-      --green: #2ecc71;       /* complete state */
+      --cellfill: #005DAA;       /* complete state */
       --green-ink: #ffffff;
       --muted: #6b6b6b;
       --radius: 14px;
@@ -27,7 +28,7 @@
       margin: 0;
       background: var(--bg);
       color: var(--ink);
-      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+      font-family: "Futura Std", "Century Gothic", ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
       -webkit-font-smoothing: antialiased;
       -moz-osx-font-smoothing: grayscale;
     }
@@ -55,7 +56,6 @@
       height: 60px;
       width: auto;
       border-radius: 8px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
     }
     
     .title-container {
@@ -103,7 +103,8 @@
       align-items: center;
       justify-content: center;
       text-align: center;
-      font-size: clamp(10px, 2.2vw, 14px);
+      font-family: "EB Garamond", ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+      font-size: clamp(12px, 2.5vw, 16px);
       line-height: 1.2;
       cursor: pointer;
       transition: transform 120ms ease, box-shadow 120ms ease, background-color 160ms ease, color 160ms ease;
@@ -122,7 +123,7 @@
     }
 
     .cell.complete {
-      background: var(--green);
+      background: var(--cellfill);
       color: var(--green-ink);
       border-color: var(--line);
     }
@@ -299,7 +300,7 @@
   <main class="page" aria-label="Bingo board">
     <header class="header">
       <img 
-        src="https://seiworkshop.sites.northeastern.edu/files/2024/04/5b748899-bf3b-4eb8-86b6-0ec996e4ec97-002-86f67258d587a667-1024x682.png" 
+        src="https://www.ascebrandingtoolkit.org/file-download/download/public/14011" 
         alt="Structural Engineering Institute Logo" 
         class="logo"
         onerror="this.style.display='none'"
